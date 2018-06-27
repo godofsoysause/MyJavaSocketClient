@@ -12,7 +12,7 @@ public class SocketClient {
 			    ss.start();
 			}
 		}catch(Exception e) {
-			
+			System.out.println(e);
 		}
 	 }   
 }
