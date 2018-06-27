@@ -23,7 +23,6 @@ public class SocketClientSend implements Runnable{
 					UserInput();
 					if(send) {
 			           	out.write(buffer,0,messageLength);
-			    		System.out.println("out.write OK ");
 			           	send = false;
 					}
 		        }
