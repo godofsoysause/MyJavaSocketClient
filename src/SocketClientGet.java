@@ -37,8 +37,8 @@ public class SocketClientGet implements Runnable{
 	      }
 	}
 	
-	byte[] buffer = new byte[2048];
-	int readOffset = 0;
+	private byte[] buffer = new byte[2048];
+	private int readOffset = 0;
 	//信息总长度（可能不止一条信息）
 	int messageLength = 0;
 	public void ReadMessage() throws UnsupportedEncodingException {

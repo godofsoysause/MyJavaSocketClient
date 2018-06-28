@@ -49,12 +49,19 @@ public class SocketClientSend implements Runnable{
 		String message = scanner.next();
 		BuildMessage(message,0);
 	}
+	//外部调用
+	public void UserInput(String message,int type) {
+		BuildMessage(message,type);
+	}
+	public void UserInput(String message,String message2,int type) {
+		BuildMessage(message,message2,type);
+	}
 	
-	byte[] buffer = new byte[2048];
-	int messageLength = 0;
+	private byte[] buffer = new byte[2048];
+	private int messageLength = 0;
 	//type什么类型的消息，0是命令行输入  可以外部调用
 	//只传一个值的BuildMessage
-	public int BuildMessage(String s,int type) {
+	private int BuildMessage(String s,int type) {
 		try {
 		byte[] b1 = s.getBytes("UTF-8");
 		if(b1.length > buffer.length-40||b1.length==0)return 0;
@@ -97,7 +104,7 @@ public class SocketClientSend implements Runnable{
 	}
 
 	//传两个值的BuildMessage
-	public int BuildMessage(String s,String s2,int type) {
+	private int BuildMessage(String s,String s2,int type) {
 		try {
 		byte[] b1 = s.getBytes("UTF-8");
 		byte[] b2 = s2.getBytes("UTF-8");

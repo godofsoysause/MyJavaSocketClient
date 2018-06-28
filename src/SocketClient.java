@@ -2,7 +2,7 @@ import java.net.Socket;
 
 
 public class SocketClient {
-	 public static void main(String args[]) {
+	public static void main(String args[]) {
 		try {
 			String address = "127.0.0.1";
 			Socket server = new Socket(address,8888); 
@@ -11,10 +11,12 @@ public class SocketClient {
 			    SocketClientSend ss = new SocketClientSend(server);
 			    sg.start();
 			    ss.start();
+			    
+			    SendTool.setClientSend(ss);
 			}
 		}catch(Exception e) {
 			System.out.println(e);
 		}
-	 }   
+	}   
 }
 
