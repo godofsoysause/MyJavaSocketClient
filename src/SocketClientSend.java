@@ -22,9 +22,12 @@ public class SocketClientSend implements Runnable{
 				while(true) {
 					//仅命令行版本使用  UserInput()
 					UserInput();
+		//P	V	TODO
+					synchronized (this) {
 					if(send) {
 			           	out.write(buffer,0,messageLength);
 			           	send = false;
+			           	}
 					}
 		        }
 			}       
@@ -96,7 +99,9 @@ public class SocketClientSend implements Runnable{
 				  */
 		System.arraycopy(b1,0,buffer,b1_length.length+4,b1.length);
 
-		send = true;
+		synchronized (this) {
+			send = true;
+        	}
 		}catch(Exception e) {
 			
 		}
@@ -135,7 +140,9 @@ public class SocketClientSend implements Runnable{
 		System.arraycopy(b2,0,buffer,
 				b_length.length+type_byte.length+b1_length.length+b1.length+b2_length.length,b2.length);
 		
-		send = true;
+		synchronized (this) {
+			send = true;
+        	}
 		}catch(Exception e) {
 			
 		}

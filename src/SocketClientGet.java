@@ -41,7 +41,8 @@ public class SocketClientGet implements Runnable{
 	private int readOffset = 0;
 	//信息总长度（可能不止一条信息）
 	int messageLength = 0;
-	public void ReadMessage() throws UnsupportedEncodingException {
+	public void ReadMessage(){
+		try {
 		readOffset = 0;
 		byte[] b1_length = new byte[4];
 		byte[] type_byte = new byte[4]; 
@@ -68,8 +69,39 @@ public class SocketClientGet implements Runnable{
 					System.out.println(s);
 					readOffset += length-4;
 					break;
+				case 1:
+					
+					break;
+				}
+				messageLength -= length+4;
 			}
-			messageLength -= length+4;
-		}
+		}catch (Exception e) {  }
+	}
+	
+	private void UserLoginReturn() throws UnsupportedEncodingException {
+		byte[] messageL = new byte[4];
+		System.arraycopy(buffer,readOffset,messageL,0,messageL.length);
+		int succeedOrNotL = TurnBytesToInt(messageL);
+		readOffset += 4;
+		byte[] succeedOrNotB = new byte[succeedOrNotL];
+		System.arraycopy(buffer,readOffset,succeedOrNotB,0,succeedOrNotB.length);
+		String succeedOrNot = new String(succeedOrNotB,"UTF-8");
+		readOffset += succeedOrNotL;
+		
+		System.arraycopy(buffer,readOffset,messageL,0,messageL.length);
+		int errorLength = TurnBytesToInt(messageL);
+		readOffset += 4;
+		byte[] errorB = new byte[errorLength];
+		System.arraycopy(buffer,readOffset,errorB,0,errorB.length);
+		String error = new String(errorB,"UTF-8");
+		readOffset += errorLength;
+		
+		server.UserLogin(userName, password, this);
+	}
+	
+	private int TurnBytesToInt(byte[] b) {
+		int i = (int) ((b[0] & 0xff) | ((b[1] & 0xff) << 8) 
+				| ((b[2] & 0xff) << 16) | ((b[3] & 0xff) << 24));
+		return i;
 	}
 }
