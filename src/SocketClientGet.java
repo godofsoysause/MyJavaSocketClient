@@ -3,7 +3,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-
+///////////////////////////////////////////////////////
 public class SocketClientGet implements Runnable{
 	private Thread t;
 	private String threadName;
