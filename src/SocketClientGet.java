@@ -70,7 +70,19 @@ public class SocketClientGet implements Runnable{
 					readOffset += length-4;
 					break;
 				case 1:
-					
+					UserLoginReturn();
+					break;
+				case 2:
+					BuildRoomReturn();
+					break;
+				case 3:
+					UserJoinRoomReturn();
+					break;
+				case 4:
+					UserSendMessageInRoomReturn();
+					break;
+				case 5:
+					UserLeaveRoomReturn();
 					break;
 				}
 				messageLength -= length+4;
@@ -79,24 +91,60 @@ public class SocketClientGet implements Runnable{
 	}
 	
 	private void UserLoginReturn() throws UnsupportedEncodingException {
-		byte[] messageL = new byte[4];
-		System.arraycopy(buffer,readOffset,messageL,0,messageL.length);
-		int succeedOrNotL = TurnBytesToInt(messageL);
-		readOffset += 4;
-		byte[] succeedOrNotB = new byte[succeedOrNotL];
-		System.arraycopy(buffer,readOffset,succeedOrNotB,0,succeedOrNotB.length);
-		String succeedOrNot = new String(succeedOrNotB,"UTF-8");
-		readOffset += succeedOrNotL;
+		String succeedOrNot = getStringFromBuffer();
 		
-		System.arraycopy(buffer,readOffset,messageL,0,messageL.length);
-		int errorLength = TurnBytesToInt(messageL);
-		readOffset += 4;
-		byte[] errorB = new byte[errorLength];
-		System.arraycopy(buffer,readOffset,errorB,0,errorB.length);
-		String error = new String(errorB,"UTF-8");
-		readOffset += errorLength;
+		String error = getStringFromBuffer();
 		
 		server.UserLogin(userName, password, this);
+	}
+	
+	private void BuildRoomReturn() throws UnsupportedEncodingException {
+
+		String succeedOrNot = getStringFromBuffer();
+		
+		String roomName = getStringFromBuffer();
+		
+		server.BuildRoom(roomName, roomPassword, this);
+	}
+	
+	private void UserJoinRoomReturn() throws UnsupportedEncodingException {
+
+		String succeedOrNot = getStringFromBuffer();
+		
+		String userNames = getStringFromBuffer();
+		
+		String[] allUserNames = userNames.split(",");
+		
+		server.BuildRoom(roomName, roomPassword, this);
+	}
+	
+	private void UserSendMessageInRoomReturn() throws UnsupportedEncodingException {
+		String userName = getStringFromBuffer();
+		
+		String stringMessage = getStringFromBuffer();
+		
+		server.UserLogin(userName, password, this);
+	}
+	private void UserLeaveRoomReturn() throws UnsupportedEncodingException {
+		String unLockRooms = getStringFromBuffer();
+		String[] unLockRoomNames = unLockRooms.split(",");
+		
+		String lockedRooms = getStringFromBuffer();
+		String[] lockedRoomNames = lockedRooms.split(",");
+		
+		server.BuildRoom(roomName, roomPassword, this);
+	}
+	//只能用于有多个值信息
+	private String getStringFromBuffer() throws UnsupportedEncodingException {
+		byte[] messageL = new byte[4];
+		System.arraycopy(buffer,readOffset,messageL,0,messageL.length);
+		int byteL = TurnBytesToInt(messageL);
+		readOffset += 4;
+		byte[] messagebyte = new byte[byteL];
+		System.arraycopy(buffer,readOffset,messagebyte,0,messagebyte.length);
+		String stringMessage = new String(messagebyte,"UTF-8");
+		readOffset += byteL;
+		return stringMessage;
 	}
 	
 	private int TurnBytesToInt(byte[] b) {
