@@ -3,61 +3,43 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
 
-public class SocketClientSend implements Runnable{
-	private Thread t;
-	private String threadName;
+public class SocketClientSend{
 	private Socket server;
 	private Scanner scanner;
-	private boolean send = false;
+	DataOutputStream out;
 	public SocketClientSend(Socket server) {
-		threadName = "SocketClientSend";
 		this.server = server;
 		scanner =new Scanner(System.in);
 		scanner.useDelimiter("\n");
-	}
-	public void run() {
 		try {
-			if(server!=null) {
-				DataOutputStream out = new DataOutputStream(server.getOutputStream());
-				while(true) {
-					//仅命令行版本使用  UserInput()
-					UserInput();
-		//P	V	TODO
-					synchronized (this) {
-					if(send) {
-			           	out.write(buffer,0,messageLength);
-			           	send = false;
-			           	}
-					}
-		        }
+			if(this.server!=null) {
+				out = new DataOutputStream(this.server.getOutputStream());
 			}       
-	      }catch (IOException e) {
-	         //e.printStackTrace();
-	    	 //System.out.println(e);
-	      }catch (Exception e) {
-		     //e.printStackTrace();
-	    	 //System.out.println(e);
-		  }
+	      }catch (IOException e) {	}
+		   catch (Exception e) {   }
 	}
-	public void start () {
-	      System.out.println("Starting " +  threadName );
-	      if (t == null) {
-	         t = new Thread (this, threadName);
-	         t.start ();
-	      }
-	}
+
 	//命令行输入
 	private void UserInput() {
 		//scanner.nextLine();
 		String message = scanner.next();
 		BuildMessage(message,0);
+		try {
+			out.write(buffer,0,messageLength);
+		}catch(Exception e) {}
 	}
 	//外部调用
 	public void UserInput(String message,int type) {
 		BuildMessage(message,type);
+		try {
+			out.write(buffer,0,messageLength);
+		}catch(Exception e) {}
 	}
 	public void UserInput(String message,String message2,int type) {
 		BuildMessage(message,message2,type);
+		try {
+			out.write(buffer,0,messageLength);
+		}catch(Exception e) {}
 	}
 	
 	private byte[] buffer = new byte[2048];
@@ -99,9 +81,6 @@ public class SocketClientSend implements Runnable{
 				  */
 		System.arraycopy(b1,0,buffer,b1_length.length+4,b1.length);
 
-		synchronized (this) {
-			send = true;
-        	}
 		}catch(Exception e) {
 			
 		}
@@ -140,9 +119,6 @@ public class SocketClientSend implements Runnable{
 		System.arraycopy(b2,0,buffer,
 				b_length.length+type_byte.length+b1_length.length+b1.length+b2_length.length,b2.length);
 		
-		synchronized (this) {
-			send = true;
-        	}
 		}catch(Exception e) {
 			
 		}

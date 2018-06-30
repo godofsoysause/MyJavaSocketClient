@@ -84,6 +84,12 @@ public class SocketClientGet implements Runnable{
 				case 5:
 					UserLeaveRoomReturn();
 					break;
+				case 7:
+					UserFindAllRoomReturn();
+					break;
+				case 8:
+					UserRegisterReturn();
+					break;
 				}
 				messageLength -= length+4;
 			}
@@ -95,16 +101,22 @@ public class SocketClientGet implements Runnable{
 		
 		String error = getStringFromBuffer();
 		
-		server.UserLogin(userName, password, this);
+		GetTool.UserLoginReturn(succeedOrNot, error);
 	}
-	
+	private void UserRegisterReturn() throws UnsupportedEncodingException {
+		String succeedOrNot = getStringFromBuffer();
+		
+		String error = getStringFromBuffer();
+		
+		GetTool.UserRegisterReturn(succeedOrNot, error);
+	}
 	private void BuildRoomReturn() throws UnsupportedEncodingException {
 
 		String succeedOrNot = getStringFromBuffer();
 		
 		String roomName = getStringFromBuffer();
 		
-		server.BuildRoom(roomName, roomPassword, this);
+		GetTool.BuildRoomReturn(succeedOrNot, roomName);
 	}
 	
 	private void UserJoinRoomReturn() throws UnsupportedEncodingException {
@@ -115,7 +127,7 @@ public class SocketClientGet implements Runnable{
 		
 		String[] allUserNames = userNames.split(",");
 		
-		server.BuildRoom(roomName, roomPassword, this);
+		GetTool.UserJoinRoomReturn(succeedOrNot, allUserNames);
 	}
 	
 	private void UserSendMessageInRoomReturn() throws UnsupportedEncodingException {
@@ -123,16 +135,44 @@ public class SocketClientGet implements Runnable{
 		
 		String stringMessage = getStringFromBuffer();
 		
-		server.UserLogin(userName, password, this);
+		GetTool.UserSendMessageInRoomReturn(userName, stringMessage);
 	}
 	private void UserLeaveRoomReturn() throws UnsupportedEncodingException {
 		String unLockRooms = getStringFromBuffer();
-		String[] unLockRoomNames = unLockRooms.split(",");
+		String[] unLockRoomNames;
+		if(!unLockRooms.equals("None")) {
+			unLockRoomNames = unLockRooms.split(",");
+		}else {
+			unLockRoomNames = new String[0];
+		}
 		
 		String lockedRooms = getStringFromBuffer();
-		String[] lockedRoomNames = lockedRooms.split(",");
+		String[] lockedRoomNames;
+		if(!lockedRooms.equals("None")) {
+			lockedRoomNames = lockedRooms.split(",");
+		}else {
+			lockedRoomNames = new String[0];
+		}
+		GetTool.UserLeaveRoomReturn(unLockRoomNames, lockedRoomNames);
+	}
+	private void UserFindAllRoomReturn() throws UnsupportedEncodingException {
+		String unLockRooms = getStringFromBuffer();
+		String[] unLockRoomNames;
+		if(!unLockRooms.equals("None")) {
+			unLockRoomNames = unLockRooms.split(",");
+		}else {
+			unLockRoomNames = new String[0];
+		}
 		
-		server.BuildRoom(roomName, roomPassword, this);
+		String lockedRooms = getStringFromBuffer();
+		String[] lockedRoomNames;
+		if(!lockedRooms.equals("None")) {
+			lockedRoomNames = lockedRooms.split(",");
+		}else {
+			lockedRoomNames = new String[0];
+		}
+		
+		GetTool.UserFindAllRoomReturn(unLockRoomNames, lockedRoomNames);
 	}
 	//只能用于有多个值信息
 	private String getStringFromBuffer() throws UnsupportedEncodingException {

@@ -33,17 +33,17 @@ public class SendTool {
 		clientSend.UserInput(roomName, password, 3);
 	}
 	
-	public static void sendMessageInRoom(String message) {
+	public static void SendMessageInRoom(String message) {
 		if (clientSend==null)return;
 		if(message.equals("")||message==null)return;
 		clientSend.UserInput(message, 4);
 	}
-	public static void leaveRoom() {
+	public static void LeaveRoom() {
 		if (clientSend==null)return;
 		clientSend.UserInput("leave", 5);
 	}
 	//6是服务器发送系统信息，客户端发送没有type 6
-	public static void getAllRoom() {
+	public static void GetAllRoom() {
 		if (clientSend==null)return;
 		clientSend.UserInput("allRoom", 7);
 	}

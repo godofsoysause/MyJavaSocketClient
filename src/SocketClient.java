@@ -10,10 +10,15 @@ public class SocketClient {
 			    SocketClientGet sg = new SocketClientGet(server);
 			    SocketClientSend ss = new SocketClientSend(server);
 			    sg.start();
-			    ss.start();
 			    
 			    SendTool.setClientSend(ss);
 			}
+			
+			SendTool.Login("yao","123");
+			SendTool.BuildRoom("YAORoom","");
+			SendTool.SendMessageInRoom("发一条消息\n换行一下");
+			SendTool.LeaveRoom();
+			SendTool.GetAllRoom();
 		}catch(Exception e) {
 			System.out.println(e);
 		}
