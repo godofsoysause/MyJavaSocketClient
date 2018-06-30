@@ -59,7 +59,7 @@ public class SocketClientGet implements Runnable{
 			type = (int) ((type_byte[0] & 0xff) | ((type_byte[1] & 0xff) << 8) 
 					| ((type_byte[2] & 0xff) << 16) | ((type_byte[3] & 0xff) << 24));
 			readOffset += 4;
-			
+			System.out.println("收到消息TYPE: "+type);
 			//不同type后续处理不同
 			switch(type) {
 				case 0:
@@ -134,7 +134,6 @@ public class SocketClientGet implements Runnable{
 		String userName = getStringFromBuffer();
 		
 		String stringMessage = getStringFromBuffer();
-		
 		GetTool.UserSendMessageInRoomReturn(userName, stringMessage);
 	}
 	private void UserLeaveRoomReturn() throws UnsupportedEncodingException {
