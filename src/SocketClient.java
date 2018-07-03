@@ -18,8 +18,14 @@ public class SocketClient {
 			SendTool.Login("yao","123");
 			SendTool.BuildRoom("YAORoom","");
 			//Thread.sleep(5000);
+			Thread.sleep(1000);
 			SendTool.SendFileInRoom("C:\\Users\\dell\\Desktop\\NEWpicture\\pokemmos.jpg");
+			Thread.sleep(1000);
 			SendTool.SendFileInRoom("C:\\Users\\dell\\Desktop\\NEWpicture\\timg.jpg");
+			SendTool.GetAllFileInRoom();
+			Thread.sleep(1000);
+			SendTool.GetFileInRoom("pokemmos.jpg");
+			SendTool.GetAllRoom();
 			SendTool.GetAllFileInRoom();
 			/*while(true) {
 				SendTool.SendMessageInRoom("发一条消息\n换行一下");

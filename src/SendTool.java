@@ -54,6 +54,10 @@ public class SendTool {
 		if (clientSend==null)return;
 		clientSend.UserInput("allFile", 10);
 	}
+	public static void GetFileInRoom(String fileName) {
+		if (clientSend==null)return;
+		clientSend.UserInput(fileName, 11);
+	}
 	public static void SendFileInRoom(String FileAddress) {
 		if (clientSend==null)return;
 		if(FileAddress.equals("")||FileAddress==null)return;
@@ -63,6 +67,7 @@ public class SendTool {
 			//File file = new File("E:\\JDK1.6中文参考手册(JDK_API_1_6_zh_CN).CHM");
 			File file = new File(FileAddress);
 			if(file.exists()) {
+				if(file.isDirectory())return;
                 fis = new FileInputStream(file);
                 String fileName = file.getName();
                 if(fileName.equals("")||fileName==null)return;

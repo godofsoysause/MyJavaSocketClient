@@ -31,8 +31,8 @@ public class SocketClientSend{
 	//外部调用
 	//传输文件
 	public void UserInput(String fileName,long fileLength,int type) {
-		BuildMessage(fileName,fileLength,type);
 		try {
+			BuildMessage(fileName,fileLength,type);
 			out.write(buffer,0,messageLength);
 		}catch(Exception e) {}
 	}

@@ -29,7 +29,7 @@ public class SocketClientGet implements Runnable{
 	    	  System.out.println(e);
 	      }catch (Exception e) {
 		     //e.printStackTrace();
-	    	  System.out.println(e);
+	    	  System.out.println("SocketClientGet.run"+e);
 		  }finally {
 				try {
 					in.close();
@@ -119,6 +119,9 @@ public class SocketClientGet implements Runnable{
 				case 10:
 					UserFindAllFileReturn(length);
 					break;
+				case 11:
+					UserGetFileInRoomReturn(length);
+					return;
 				}
 				messageLength -= length+4;
 			}else {
@@ -129,7 +132,34 @@ public class SocketClientGet implements Runnable{
 				//break;
 				return;
 			}}
-		}catch (Exception e) {  }
+		}catch (Exception e) { 
+			System.out.println("SocketClientGet.ReadMessage"+e);
+		}
+	}
+	
+	private void UserGetFileInRoomReturn(int subLength) {
+		byte[] temp_b;
+		try {
+			String fileName = getStringFromBuffer();
+			Long fileLength = getLongFromBuffer();
+			messageLength -= subLength+4;
+			if(messageLength>0) {
+				byte[] bytes = new byte[messageLength];
+				System.arraycopy(buffer,readOffset,bytes,0,messageLength);
+				temp_b = GetTool.UserGetFileInRoomReturn(in,fileName,fileLength,bytes);
+			}else {
+				byte[] bytes = new byte[0];
+				temp_b = GetTool.UserGetFileInRoomReturn(in,fileName,fileLength,bytes);
+			}
+			if(temp_b.length>0) {
+				System.arraycopy(temp_b,0,buffer,0,temp_b.length);
+				messageLength = temp_b.length;
+			}else {
+				messageLength = 0;
+			}
+		}catch(Exception e) {
+			System.out.println("SocketClientGet.UserGetFileInRoomReturn"+e);
+		}
 	}
 	private void UserFindAllFileReturn(int length) throws UnsupportedEncodingException {
 		byte[] message = new byte[length-4];
@@ -241,6 +271,22 @@ public class SocketClientGet implements Runnable{
 		return stringMessage;
 	}
 	
+	private Long getLongFromBuffer() throws UnsupportedEncodingException {
+		readOffset += 4;
+		byte[] messagebyte = new byte[8];
+		System.arraycopy(buffer,readOffset,messagebyte,0,messagebyte.length);
+		Long l = bytes2Long(messagebyte);
+		readOffset += 8;
+		return l;
+	}
+	public static long bytes2Long(byte[] byteNum) {
+		long num = 0;
+		for (int ix = 0; ix < 8; ++ix) {
+			num <<= 8;
+			num |= (byteNum[ix] & 0xff);
+		}
+		return num;
+	}
 	private int TurnBytesToInt(byte[] b) {
 		int i = (int) ((b[0] & 0xff) | ((b[1] & 0xff) << 8) 
 				| ((b[2] & 0xff) << 16) | ((b[3] & 0xff) << 24));
