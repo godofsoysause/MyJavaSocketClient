@@ -1,5 +1,4 @@
 public class GetTool {
-
 	public static void UserLoginReturn(String succeedOrNot,String error) {
 		System.out.println("登录成功了吗："+succeedOrNot+"    error: "+error);
 	}
@@ -51,5 +50,16 @@ public class GetTool {
 		}
 		System.out.println("查找房间，没密码的房间有: "+unLockRoom);
 		System.out.println("有密码的房间有: "+LockRoom);
+	}
+	public static void UserFindAllFileReturn(String[] allFilesName) {
+		String filesName = "";
+		for(int i=0;i<allFilesName.length;i++) {
+			filesName += allFilesName[i];
+			filesName += "|";
+		}
+		System.out.println("所有文件名: "+filesName);
+	}
+	public static void UserSendFileReturn(String succeedOrNot,String error) {
+		System.out.println("文件发送成功了吗："+succeedOrNot+"    error: "+error);
 	}
 }

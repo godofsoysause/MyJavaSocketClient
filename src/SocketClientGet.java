@@ -10,6 +10,7 @@ public class SocketClientGet implements Runnable{
 	private Thread t;
 	private String threadName;
 	private Socket server;
+	DataInputStream in;
 	public SocketClientGet(Socket server) {
 		threadName = "SocketClientGet";
 		this.server = server;
@@ -17,7 +18,7 @@ public class SocketClientGet implements Runnable{
 	public void run() {
 		try {
 			if(server!=null) {
-				DataInputStream in = new DataInputStream(server.getInputStream());
+				in = new DataInputStream(server.getInputStream());
 		        while(true) {
 		        	messageLength += in.read(buffer,messageLength,buffer.length-messageLength);
 		        	ReadMessage();
@@ -29,7 +30,12 @@ public class SocketClientGet implements Runnable{
 	      }catch (Exception e) {
 		     //e.printStackTrace();
 	    	  System.out.println(e);
-		  }
+		  }finally {
+				try {
+					in.close();
+					server.close();
+				}catch(Exception e) {}
+			}
 	}
 	public void start () {
 	      System.out.println("Starting " +  threadName );
@@ -107,6 +113,12 @@ public class SocketClientGet implements Runnable{
 				case 8:
 					UserRegisterReturn();
 					break;
+				case 9:
+					UserSendFileReturn();
+					break;
+				case 10:
+					UserFindAllFileReturn(length);
+					break;
 				}
 				messageLength -= length+4;
 			}else {
@@ -119,7 +131,26 @@ public class SocketClientGet implements Runnable{
 			}}
 		}catch (Exception e) {  }
 	}
-	
+	private void UserFindAllFileReturn(int length) throws UnsupportedEncodingException {
+		byte[] message = new byte[length-4];
+		System.arraycopy(buffer,readOffset,message,0,message.length);
+		String s = new String(message,"UTF-8");
+		String[] allFilesName;
+		if(!s.equals("None")) {
+			allFilesName = s.split(",");
+		}else {
+			allFilesName = new String[0];
+		}
+		readOffset += length-4;
+		GetTool.UserFindAllFileReturn(allFilesName);
+	}
+	private void UserSendFileReturn() throws UnsupportedEncodingException {
+		String succeedOrNot = getStringFromBuffer();
+		
+		String error = getStringFromBuffer();
+		
+		GetTool.UserSendFileReturn(succeedOrNot, error);
+	}
 	private void UserLoginReturn() throws UnsupportedEncodingException {
 		String succeedOrNot = getStringFromBuffer();
 		
