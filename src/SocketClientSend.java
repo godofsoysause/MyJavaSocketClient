@@ -29,6 +29,12 @@ public class SocketClientSend{
 		}catch(Exception e) {}
 	}
 	//外部调用
+	//发送紧急数据，判断连接是否断开
+	public void SendUrgentData() {
+		try {
+			server.sendUrgentData(0xFF);
+		}catch(Exception e){}
+	}
 	//传输文件
 	public void UserInput(String fileName,long fileLength,int type) {
 		try {

@@ -5,8 +5,9 @@ import java.net.Socket;
 public class SocketClient {
 	public static void main(String args[]) {
 		try {
-			String address = "127.0.0.1";
+			String address = "192.168.43.163";//"127.0.0.1";
 			Socket server = new Socket(address,8888); 
+			server.setOOBInline(true);  
 			if(server!=null) {
 			    SocketClientGet sg = new SocketClientGet(server);
 			    SocketClientSend ss = new SocketClientSend(server);
@@ -15,10 +16,14 @@ public class SocketClient {
 			    SendTool.setClientSend(ss);
 			}
 
-			SendTool.Login("yao","123");
+			SendTool.Login("xiaokang","123");
 			SendTool.BuildRoom("YAORoom","");
+			while(true) {
+			Thread.sleep(5000);
+			System.out.println("Send");
+			SendTool.sendUrgentData();}
 			//Thread.sleep(5000);
-			Thread.sleep(1000);
+			/*Thread.sleep(1000);
 			SendTool.SendFileInRoom("C:\\Users\\dell\\Desktop\\NEWpicture\\pokemmos.jpg");
 			Thread.sleep(1000);
 			SendTool.SendFileInRoom("C:\\Users\\dell\\Desktop\\NEWpicture\\timg.jpg");
@@ -26,7 +31,7 @@ public class SocketClient {
 			Thread.sleep(1000);
 			SendTool.GetFileInRoom("pokemmos.jpg");
 			SendTool.GetAllRoom();
-			SendTool.GetAllFileInRoom();
+			SendTool.GetAllFileInRoom();*/
 			/*while(true) {
 				SendTool.SendMessageInRoom("发一条消息\n换行一下");
 				SendTool.GetAllRoom();

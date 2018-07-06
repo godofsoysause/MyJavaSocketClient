@@ -3,11 +3,15 @@ import java.io.FileInputStream;
 
 public class SendTool {
 	private static SocketClientSend clientSend;
-
+	
 	public static void setClientSend(SocketClientSend clientSend) {
 		SendTool.clientSend = clientSend;
 	}
 	
+	public static void sendUrgentData() {
+		if (clientSend==null)return;
+		clientSend.SendUrgentData();
+	}
 	public static void Login(String userName,String password) {
 		if (clientSend==null)return;
 		if(userName.equals("")||userName==null)return;

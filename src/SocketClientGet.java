@@ -68,21 +68,22 @@ public class SocketClientGet implements Runnable{
 				continue;
 			}
 
-			//解决半包问题
-			if(length>messageLength-4) {
-				if(length>buffer.length-4) {
-					buffer = Arrays.copyOf(buffer, length+4);
-				}
-				System.arraycopy(buffer,readOffset,buffer,0,messageLength);
-				return;
-			}
-
 			readOffset += 4;
 			System.arraycopy(buffer,readOffset,type_byte,0,type_byte.length);
 			type = (int) ((type_byte[0] & 0xff) | ((type_byte[1] & 0xff) << 8) 
 					| ((type_byte[2] & 0xff) << 16) | ((type_byte[3] & 0xff) << 24));
 			readOffset += 4;
 			System.out.println("收到消息TYPE: "+type);
+			//解决半包问题
+			if(type!=11) {
+			if(length>messageLength-4) {
+				readOffset -= 8;
+				System.arraycopy(buffer,readOffset,buffer,0,messageLength);
+				if(length>buffer.length-4) {
+					buffer = Arrays.copyOf(buffer, length+4);
+				}
+				return;
+			}}
 			//不同type后续处理不同
 			switch(type) {
 				case 0:
@@ -132,7 +133,7 @@ public class SocketClientGet implements Runnable{
 				//break;
 				return;
 			}}
-		}catch (Exception e) { 
+		}catch (IOException e) { 
 			System.out.println("SocketClientGet.ReadMessage"+e);
 		}
 	}
