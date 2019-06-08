@@ -29,6 +29,25 @@ public class SocketClientSend{
 		}catch(Exception e) {}
 	}
 	//外部调用
+	//发送紧急数据，判断连接是否断开
+	public void SendUrgentData() {
+		try {
+			server.sendUrgentData(0xFF);
+		}catch(Exception e){}
+	}
+	//传输文件
+	public void UserInput(String fileName,long fileLength,int type) {
+		try {
+			BuildMessage(fileName,fileLength,type);
+			out.write(buffer,0,messageLength);
+		}catch(Exception e) {}
+	}
+	public void UserInput(byte[] bytes,int length) {
+		try {
+			out.write(bytes,0,length);
+		}catch(Exception e) {}
+	}
+	//信息传输
 	public void UserInput(String message,int type) {
 		BuildMessage(message,type);
 		try {
@@ -123,6 +142,49 @@ public class SocketClientSend{
 			
 		}
 		return messageLength;
+	}
+	private int BuildMessage(String s,long l,int type) {
+		try {
+		byte[] b1 = s.getBytes("UTF-8");
+		byte[] b2 = long2Bytes(l);
+		
+		int i = 0;
+		int b1_l = 0;
+		int b2_l = 0;
+		
+		messageLength = b1.length + b2.length + 16;
+		b1_l = b1.length;
+		b2_l = b2.length;
+		i = messageLength-4;
+		
+		byte[] b_length = TurnIntToBytes(i); 	
+		byte[] type_byte = TurnIntToBytes(type); 
+		byte[] b1_length = TurnIntToBytes(b1_l);
+		byte[] b2_length = TurnIntToBytes(b2_l);
+		
+		System.arraycopy(b_length,0,buffer,0,b_length.length);
+		System.arraycopy(type_byte,0,buffer,
+				b_length.length,type_byte.length);
+		System.arraycopy(b1_length,0,buffer,
+				b_length.length+type_byte.length,b1_length.length);
+		System.arraycopy(b1,0,buffer,
+				b_length.length+type_byte.length+b1_length.length,b1.length);
+		System.arraycopy(b2_length,0,buffer,
+				b_length.length+type_byte.length+b1_length.length+b1.length,b2_length.length);
+		System.arraycopy(b2,0,buffer,
+				b_length.length+type_byte.length+b1_length.length+b1.length+b2_length.length,b2.length);
+		}catch(Exception e) {
+			
+		}
+		return messageLength;
+	}
+	public byte[] long2Bytes(long num) {
+		byte[] byteNum = new byte[8];
+		for (int ix = 0; ix < 8; ++ix) {
+			int offset = 64 - (ix + 1) * 8;
+			byteNum[ix] = (byte) ((num >> offset) & 0xff);
+		}
+		return byteNum;
 	}
 	private byte[] TurnIntToBytes(int i) {
 		byte[] b = new byte[4]; 
